@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile | Royal Imperial Domain</title>
+<style>
+:root{--bg:#f5f1e8;--card:#ffffff;--text:#1a3a2e;--muted:#8b9cb0;--accent:#2d5a3d;--accent-2:#d4c5b0;--border:rgba(45,90,61,.15);--radius:14px;--shadow:0 18px 48px rgba(0,0,0,.08);}*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',Tahoma,sans-serif;background:linear-gradient(135deg,#f5f1e8 0%,#ffffff 100%);color:#1a3a2e;line-height:1.65;} h1, h2, h3, h4, h5, h6{color:#1a3a2e;padding:15px 0;} .container{max-width:1200px;margin:0 auto;padding:0 20px;} .navbar{background:rgba(255,255,255,.98);position:sticky;top:0;z-index:50;padding:16px 0;} .navbar .links{display:flex;justify-content:center;gap:14px;} .navbar a{color:#1a3a2e;text-decoration:none;font-weight:600;padding:8px 12px;border-radius:8px;} .navbar a:hover{background:rgba(45,90,61,.12);} .hero{min-height:75vh;display:grid;place-items:center;padding:80px 20px;background:url('https://images.unsplash.com/photo-1576675780845-a58104ea0328?w=1600&h=900&fit=crop') center/cover no-repeat;position:relative;} .hero::before{content:'';position:absolute;inset:0;background:rgba(12,35,71,.55);} .hero-content{position:relative;z-index:2;text-align:center;max-width:900px;} .hero-content h1{font-size:clamp(2rem,5vw,3.5rem);} .hero-content p{margin:14px 0;font-size:clamp(1rem,2vw,1.2rem);} .btn, .btn-secondary{display:inline-block;padding:14px 24px;border:none;border-radius:8px;font-weight:600;text-decoration:none;} .btn{background:var(--accent);color:#fff;} .btn-secondary{background:var(--accent-2);color:#0f1f3d;} .section{padding:60px 0;text-align:center;} .card{background:#fff;color:#0f1f3d;border-radius:var(--radius);overflow:hidden;margin-bottom:20px;padding:20px;text-align:left;} .card h3{margin-bottom:10px;} .list-item{border-bottom:1px solid var(--border);padding:10px 0;} .list-item:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="container"><div class="links"><a href="home.html">Home</a><a href="rooms.html">Rooms</a><a href="restaurant.html">Dining</a><a href="booking.html">Booking</a><a href="blog.html">Blog</a><a href="reviews.html">Reviews</a><a href="profile.html">Profile</a></div></div></nav>
+
+<div class="hero"><div class="hero-content"><h1>My Profile</h1><p>View your reservations, orders, and receipts</p></div></div>
+
+<main class="container">
+<div class="section">
+<h2>Your Reservations</h2>
+<div id="bookingsList"></div>
+
+<h2>Your Orders</h2>
+<div id="ordersList"></div>
+
+<h2>Your Receipts</h2>
+<div id="receiptsList"></div>
+</div>
+</main>
+
+<footer style="text-align:center;padding:20px;color:#1a3a2e;background:#c8e6c9;">&copy; 2026 Royal Imperial Domain</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    loadProfileData();
+});
+
+function loadProfileData() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) {
+        document.querySelector('main').innerHTML = '<div class="section"><p>Please login to view your profile.</p><a href="login.html" class="btn">Login</a></div>';
+        return;
+    }
+
+    // Load bookings
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]').filter(b => b.email === user.email);
+    const bookingsList = document.getElementById('bookingsList');
+    if (bookings.length === 0) {
+        bookingsList.innerHTML = '<p>No reservations found.</p>';
+    } else {
+        bookingsList.innerHTML = bookings.map(b => `
+            <div class="card">
+                <h3>Booking #${b.id}</h3>
+                <p><strong>Room:</strong> ${b.roomType}</p>
+                <p><strong>Check-in:</strong> ${b.checkIn}</p>
+                <p><strong>Check-out:</strong> ${b.checkOut}</p>
+                <p><strong>Guests:</strong> ${b.guestName}</p>
+                <p><strong>Total:</strong> $${b.total}</p>
+                <p><strong>Status:</strong> ${b.status || 'Confirmed'}</p>
+            </div>
+        `).join('');
+    }
+
+    // Load orders
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]').filter(o => o.userId === user.id);
+    const ordersList = document.getElementById('ordersList');
+    if (orders.length === 0) {
+        ordersList.innerHTML = '<p>No orders found.</p>';
+    } else {
+        ordersList.innerHTML = orders.map(o => `
+            <div class="card">
+                <h3>Order #${o.id}</h3>
+                <p><strong>Items:</strong> ${o.items.map(i => `${i.name} (x${i.quantity})`).join(', ')}</p>
+                <p><strong>Total:</strong> $${o.total}</p>
+                <p><strong>Date:</strong> ${new Date(o.timestamp).toLocaleString()}</p>
+                <p><strong>Status:</strong> ${o.status || 'Completed'}</p>
+            </div>
+        `).join('');
+    }
+
+    // Load receipts (assuming receipts are stored or generate from bookings/orders)
+    const receipts = [...bookings, ...orders];
+    const receiptsList = document.getElementById('receiptsList');
+    if (receipts.length === 0) {
+        receiptsList.innerHTML = '<p>No receipts found.</p>';
+    } else {
+        receiptsList.innerHTML = receipts.map(r => `
+            <div class="card">
+                <h3>Receipt #${r.id}</h3>
+                <p><strong>Type:</strong> ${r.roomType ? 'Booking' : 'Order'}</p>
+                <p><strong>Total:</strong> $${r.total}</p>
+                <p><strong>Date:</strong> ${r.timestamp ? new Date(r.timestamp).toLocaleString() : r.checkIn}</p>
+                <button class="btn" onclick="downloadReceipt(${r.id})">Download Receipt</button>
+            </div>
+        `).join('');
+    }
+}
+
+function downloadReceipt(id) {
+    // Simple download simulation
+    alert('Receipt download feature would be implemented here.');
+}
+</script>
+</body>
+</html>

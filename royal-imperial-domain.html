@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Imperial Domain - Luxury Hotel Management System</title>
+    <style>
+        :root {
+            --bg: #f5f1e8;
+            --card: #ffffff;
+            --text: #1a3a2e;
+            --muted: #8b9cb0;
+            --accent: #2d5a3d;
+            --accent-2: #d4c5b0;
+            --border: rgba(45, 90, 61, 0.15);
+            --radius: 14px;
+            --shadow: 0 18px 48px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f1e8 0%, #ffffff 100%);
+            color: #1a3a2e;
+            line-height: 1.65;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #b9ecd9;
+            padding: 15px 0;
+        }
+
+        .global-message-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .global-message-overlay .message-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 24px 30px;
+            max-width: 450px;
+            width: 100%;
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .global-message-overlay .message-box.success {
+            border-color: #28a745;
+            color: #20522d;
+        }
+
+        .global-message-overlay .message-box.error {
+            border-color: #dc2626;
+            color: #8b1010;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(45, 90, 61, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar .inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+        }
+
+        .navbar .logo {
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .navbar .links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: #1a3a2e;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .navbar a:hover {
+            background: rgba(45, 90, 61, 0.12);
+            color: #1a3a2e;
+        }
+
+        .navbar a.active {
+            background: #2d5a3d;
+            color: white;
+            box-shadow: 0 4px 14px rgba(45, 90, 61, 0.3);
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            min-height: calc(100vh - 80px);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* HERO SECTION */
+        .hero {
+            position: relative;
+            min-height: 80vh;
+            display: grid;
+            place-items: center;
+            padding: 80px 20px;
+            color: #ffffff;
+            overflow: hidden;
+            background: url('https://images.unsplash.com/photo-1576675780845-a58104ea0328?w=1600&h=900&fit=crop') center/cover no-repeat;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(12, 35, 71, 0.55);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            align-items: center;
+        }
+
+        .hero-copy {
+            text-align: left;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            margin-bottom: 20px;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            opacity: 0.95;
+            margin-bottom: 30px;
+            max-width: 560px;
+        }
+
+        .hero .hero-cta {
+            display: inline-flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero .hero-cta .btn {
+            padding: 12px 22px;
+            font-size: 1rem;
+        }
+
+        .hero-image {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 22px 55px rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* SECTION */
+        .section {
+            padding: 60px 30px;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .section p {
+            text-align: center;
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .grid-1 {
+            grid-template-columns: 1fr;
+        }
+
+        /* CARD */
+        .card {
+            background: rgba(255, 255, 255, 0.99);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(45, 90, 61, 0.08);
+            transition: all 0.3s;
+            border: 1px solid rgba(45, 90, 61, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 36px rgba(45, 90, 61, 0.12);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #556b2f 0%, #3f6b39 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .card-price {
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 900;
+            margin: 12px 0;
+        }
+
+        .card-desc {
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        /* BUTTON */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #2d5429;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--accent-2);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #a3d1a3;
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(63, 107, 57, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* MESSAGE */
+        .message {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .message.success {
+            background: #d1f2db;
+            color: #065e48;
+            border-left: 4px solid #059669;
+        }
+
+        .message.error {
+            background: #fed7d7;
+            color: #851d37;
+            border-left: 4px solid #dc2626;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            color: #0c4a6e;
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* LOADING */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ADMIN STYLES */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 4px solid var(--accent);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            color: var(--accent);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .list-item {
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .list-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .list-item-col {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .list-item-col strong {
+            color: var(--text);
+        }
+
+        .list-item-col small {
+            color: var(--muted);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background: #d1f2db;
+            color: #065e48;
+        }
+
+        .status-badge.pending {
+            background: #fed7d7;
+            color: #851d37;
+        }
+
+        .status-badge.preparing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* TWO COLUMN */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .navbar .links {
+                gap: 10px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* FOOTER */
+        footer {
+            background: #c8e6c9;
+            color: #1a3a2e;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(45, 90, 61, 0.15);
+        }
+
+        footer h4 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #1a3a2e;
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto 40px;
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text);
+        }
+
+        /* CART STYLES */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-small {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-small:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="inner">
+                <div class="logo" onclick="app.showPage('home')">Royal Imperial Domain</div>
+                <div class="links" id="navLinks">
+                    <a onclick="app.showPage('home')">Home</a>
+                    <a onclick="app.showPage('rooms')">Rooms</a>
+                    <a onclick="app.showPage('restaurant')">Dining</a>
+                    <a onclick="app.showPage('booking')">Meeting</a>
+                    <a onclick="app.showPage('blog')">Wellness</a>
+                    <a onclick="app.showPage('reviews')">Reviews</a>
+                    <a onclick="app.showPage('profile')" id="profileLink" style="display: none;">Profile</a>
+                </div>
+                <a onclick="app.showPage('admin')" id="adminLink" style="display: none; margin-left: 15px;">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="globalMessageOverlay" class="global-message-overlay" onclick="this.style.display='none';">
+        <div class="message-box" id="globalMessageBox"></div>
+    </div>
+
+    <div class="content">
+        <!-- HOME PAGE -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-copy">
+                        <h1>Explore Royal Imperial Domain</h1>
+                        <h2>Welcome to our Luxury Hotel</h2>
+                        <h4>Unique and personal</h4>
+                        <p>Our wish is to offer you a unique and more personal hotel experience. We want you to feel at home when you're staying at our hotel – that means we go the extra mile to ensure your needs and wants are fulfilled. If you need anything, we stand ready to assist.</p>
+                        <h4>The extra mile</h4>
+                        <p>Our focus is on delivering that little extra that makes your stay with us memorable. Our guests can enjoy exceptional service and amenities.</p>
+                        <div class="hero-cta">
+                            <button class="btn" onclick="app.showPage('booking')">Book Your Stay</button>
+                            <button class="btn btn-secondary" onclick="app.showPage('rooms')">View Rooms</button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=800&fit=crop" alt="Hotel interior" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" style="background: #f0f4e8;">
+                <div class="container">
+                    <h2>Dining</h2>
+                    <div class="grid grid-3">
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>5-Star Service</h3>
+                            <p>Exceptional service from our dedicated staff</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Fine Dining</h3>
+                            <p>World-class restaurant with award-winning chefs</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Luxury Amenities</h3>
+                            <p>Premium facilities and modern technology</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="container">
+                    <h2>Meeting</h2>
+                    <p>Professional meeting spaces for your business needs</p>
+                    <div class="grid grid-3">
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Conference Rooms</h3>
+                            <p>State-of-the-art facilities for meetings and events</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1556912173-46c336c7fd55?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Event Planning</h3>
+                            <p>Full-service event coordination</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Business Services</h3>
+                            <p>High-speed internet and office support</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" style="background: #f0f4e8;">
+                <div class="container">
+                    <h2>Wellness</h2>
+                    <p>Relax and rejuvenate with our wellness amenities</p>
+                    <div class="grid grid-3">
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Spa Services</h3>
+                            <p>Rejuvenating treatments and massages</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Fitness Center</h3>
+                            <p>Modern gym equipment and personal training</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=80&h=80&fit=crop'); background-size: cover; background-position: center; border-radius: 50%;"></div>
+                            <h3>Outdoor Activities</h3>
+                            <p>Explore nature and local attractions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROOMS PAGE -->
+        <div id="rooms" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>Our Room Collection</h2>
+                    <p>Choose from our premium selection</p>
+                    <div class="grid grid-3" id="roomsGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESTAURANT PAGE -->
+        <div id="restaurant" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>Fine Dining Restaurant</h2>
+                    <p>Exquisite cuisine from our award-winning chefs</p>
+                    <div class="grid grid-3" id="menuGrid"></div>
+
+                    <!-- CART SECTION -->
+                    <div style="margin-top: 60px; display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start;">
+                        <div>
+                            <h3>Your Order</h3>
+                            <div id="cartItems" style="min-height: 200px; border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: white;">
+                                <p style="color: var(--muted); text-align: center;">Your cart is empty</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>Order Summary</h3>
+                                <div id="cartMessage" class="message"></div>
+                                <div class="form-group" style="margin: 12px 0;">
+                                    <label>Service Type</label>
+                                    <select id="serviceType" onchange="app.updateServiceFields()" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid var(--border);">
+                                        <option value="">Select service</option>
+                                        <option value="dine-in">Dine-in</option>
+                                        <option value="room-service">Room service</option>
+                                    </select>
+                                </div>
+                                <div id="tableNumberSection" class="form-group" style="display: none; margin-bottom: 12px;">
+                                    <label>Table Number (1-8)</label>
+                                    <input type="number" id="tableNumber" min="1" max="8" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid var(--border);" />
+                                </div>
+                                <div id="roomNumberSection" class="form-group" style="display: none; margin-bottom: 12px;">
+                                    <label>Room Number</label>
+                                    <input type="text" id="orderRoomNumber" placeholder="e.g. 101" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid var(--border);" />
+                                </div>
+                                <div style="margin: 20px 0;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 600;">
+                                        <span>Total:</span>
+                                        <span>$<span id="cartTotal">0.00</span></span>
+                                    </div>
+                                </div>
+                                <button class="btn" onclick="app.proceedWithOrder()" style="width: 100%;">Proceed to Checkout</button>
+                                <button class="btn btn-secondary" onclick="app.downloadLastReceipt()" style="width: 100%; margin-top: 8px;">Download Receipt</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOOKING PAGE -->
+        <div id="booking" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>Book Your Stay</h2>
+                    <div class="two-col">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>Booking Details</h3>
+                                <div id="bookingMessage" class="message"></div>
+                                <div id="bookingLoading" class="loading">
+                                    <div class="spinner"></div>
+                                    <p>Processing your booking...</p>
+                                </div>
+                                <form id="bookingForm" onsubmit="app.submitBooking(event)">
+                                    <div class="form-group">
+                                        <label>Guest Name</label>
+                                        <input type="text" id="guestName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="guestEmail" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Check In Date</label>
+                                        <input type="date" id="checkIn" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Check Out Date</label>
+                                        <input type="date" id="checkOut" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Room Type</label>
+                                        <select id="roomType" required>
+                                            <option>Select a room...</option>
+                                            <option value="Standard">Standard Room - $150</option>
+                                            <option value="Deluxe">Deluxe Room - $220</option>
+                                            <option value="Executive">Executive Suite - $350</option>
+                                            <option value="Luxury">Luxury Suite - $500</option>
+                                            <option value="Presidential">Presidential Suite - $1,200</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Number of Rooms</label>
+                                        <input type="number" id="numberOfRooms" min="1" max="10" value="1" required>
+                                    </div>
+                                    <button type="submit" class="btn" style="width: 100%;">Complete Booking</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>Booking Summary</h3>
+                                <div style="display: grid; gap: 15px; margin-top: 20px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>Room Type:</span>
+                                        <strong id="summaryRoom">-</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>Nights:</span>
+                                        <strong id="summaryNights">-</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>Rooms:</span>
+                                        <strong id="summaryRooms">-</strong>
+                                    </div>
+                                    <hr style="border: none; border-top: 2px solid var(--border); margin: 20px 0;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 1.5rem; color: var(--accent); font-weight: 900;">
+                                        <span>Total:</span>
+                                        <strong id="summaryTotal">$0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOG PAGE -->
+        <div id="blog" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>Hotel Blog</h2>
+                    <p>Travel tips and luxury experiences</p>
+                    <div class="grid grid-1" style="max-width: 800px; margin: 40px auto;">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">The Art of Fine Dining</h3>
+                                <p class="card-desc">Discover our culinary philosophy and chef recommendations</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Travel Tips for Luxury Experiences</h3>
+                                <p class="card-desc">Expert advice on making the most of your stay</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Wellness & Relaxation</h3>
+                                <p class="card-desc">Rejuvenate with our spa services and wellness programs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REVIEWS PAGE -->
+        <div id="reviews" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>Guest Reviews</h2>
+                    <div class="two-col">
+                        <div>
+                            <h3>Share Your Experience</h3>
+                            <div id="reviewMessage" class="message"></div>
+                            <form id="reviewForm" onsubmit="app.submitReview(event)">
+                                <div class="form-group">
+                                    <label>Your Name</label>
+                                    <input type="text" id="reviewName" required value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>Rating</label>
+                                    <select id="reviewRating" required>
+                                        <option value="5">5 - Excellent</option>
+                                        <option value="4">4 - Good</option>
+                                        <option value="3">3 - Average</option>
+                                        <option value="2">2 - Poor</option>
+                                        <option value="1">1 - Very Poor</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Your Review</label>
+                                    <textarea id="reviewText" required placeholder="Tell us about your experience..."></textarea>
+                                </div>
+                                <button type="submit" class="btn" style="width: 100%;">Submit Review</button>
+                            </form>
+                        </div>
+                        <div>
+                            <h3>Recent Reviews</h3>
+                            <div id="reviewsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOGIN PAGE -->
+        <div id="login" class="page">
+            <div class="section">
+                <div class="container">
+                    <div class="login-container">
+                        <h2>Customer Login</h2>
+                        <div id="loginMessage" class="message"></div>
+                        <form id="loginForm" onsubmit="app.userLogin(event)">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="userEmail" required placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="userPassword" required placeholder="Enter your password">
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Login</button>
+                        </form>
+                        <p style="text-align: center; margin-top: 20px; color: var(--muted); font-size: 0.9rem;">
+                            
+                        </p>
+                        <p style="text-align: center; margin-top: 20px; color: var(--muted);">
+                            Don't have an account? <a onclick="app.showPage('signup')" style="color: var(--accent); cursor: pointer;">Sign up here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIGNUP PAGE -->
+        <div id="signup" class="page">
+            <div class="section">
+                <div class="container">
+                    <div class="login-container">
+                        <h2>Create Account</h2>
+                        <div id="signupMessage" class="message"></div>
+                        <form id="signupForm" onsubmit="app.userSignup(event)">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="signupName" required placeholder="John Smith">
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="signupEmail" required placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="signupPhone" required placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="signupPassword" required placeholder="Create a password" minlength="6">
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+                        </form>
+                        <p style="text-align: center; margin-top: 20px; color: var(--muted);">
+                            Already have an account? <a onclick="app.showPage('login')" style="color: var(--accent); cursor: pointer;">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div id="profile" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>My Profile</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                        <div>
+                            <h3 id="profileName" style="color: var(--accent);">Guest User</h3>
+                            <p id="profileEmail" style="color: var(--muted);">Not logged in</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="app.userLogout()">Logout</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
+                        <div class="card">
+                            <h3>Reservations</h3>
+                            <div id="bookingsList"></div>
+                        </div>
+                        <div class="card">
+                            <h3>Orders</h3>
+                            <div id="ordersList"></div>
+                        </div>
+                        <div class="card">
+                            <h3>Receipts</h3>
+                            <div id="receiptsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN PAGE -->
+        <div id="admin" class="page">
+            <div class="section">
+                <div class="container">
+                    <h2>Admin Dashboard</h2>
+                    <p id="adminStatus" style="text-align: center; color: var(--muted);"></p>
+
+                    <!-- DASHBOARD -->
+                    <div id="adminDashboard" style="display: block;">
+                        <div style="text-align: right; margin-bottom: 20px;">
+                            <button class="btn btn-secondary" onclick="app.adminLogout()">Logout</button>
+                        </div>
+
+                        <p style="margin-bottom: 12px; color: var(--muted); text-align: center;">Contact us: <a href="https://www.facebook.com/royalimperialdomain" target="_blank">Facebook</a> | <a href="https://www.instagram.com/royalimperialdomain" target="_blank">Instagram</a> | <a href="mailto:info@royalimperialdomain.com">Email</a></p>
+
+                        <div class="admin-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="statBookings">0</div>
+                                <div class="stat-label">Total Bookings</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="statRevenue">$0</div>
+                                <div class="stat-label">Total Revenue</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="statCustomers">0</div>
+                                <div class="stat-label">Registered Customers</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="statRooms">0</div>
+                                <div class="stat-label">Rooms Available</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="statOccupancy">0%</div>
+                                <div class="stat-label">Occupancy Rate</div>
+                            </div>
+                        </div>
+
+                        <div id="roomStatusOverview" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;"> 
+                            <div class="card" style="padding: 16px; border: 1px solid var(--border);">
+                                <strong>Rooms Available</strong>
+                                <div id="availableRoomsCount" style="font-size: 1.8rem; font-weight: 900; color: var(--accent);">0</div>
+                            </div>
+                            <div class="card" style="padding: 16px; border: 1px solid var(--border);">
+                                <strong>Rooms Occupied</strong>
+                                <div id="occupiedRoomsCount" style="font-size: 1.8rem; font-weight: 900; color: #dc2626;">0</div>
+                            </div>
+                            <div class="card" style="padding: 16px; border: 1px solid var(--border);">
+                                <strong>Rooms Cleaning</strong>
+                                <div id="cleaningRoomsCount" style="font-size: 1.8rem; font-weight: 900; color: #d97706;">0</div>
+                            </div>
+                        </div>
+
+                        <div id="roomStatusList" style="margin-top: 16px;"></div>
+
+                        <div style="margin-top: 40px;">
+                            <div class="tabs">
+                                <button class="tab active" onclick="app.switchTab(event, 'bookings')">Bookings</button>
+                                <button class="tab" onclick="app.switchTab(event, 'orders')">Orders</button>
+                                <button class="tab" onclick="app.switchTab(event, 'kitchen')">Kitchen</button>
+                                <button class="tab" onclick="app.switchTab(event, 'housekeeping')">Housekeeping</button>
+                                <button class="tab" onclick="app.switchTab(event, 'sales')">Sales</button>
+                            </div>
+
+                            <!-- Bookings Tab -->
+                            <div id="tab-bookings" class="tab-content active">
+                                <h3>Recent Bookings</h3>
+                                <div id="bookingsList"></div>
+                            </div>
+
+                            <!-- Orders Tab -->
+                            <div id="tab-orders" class="tab-content">
+                                <h3>Restaurant Orders</h3>
+                                <div id="ordersList"></div>
+                            </div>
+
+                            <!-- Kitchen Tab -->
+                            <div id="tab-kitchen" class="tab-content">
+                                <h3>Kitchen Management</h3>
+
+                                <div class="card" style="margin-bottom: 16px;">
+                                    <div class="card-body">
+                                        <h4>Create Kitchen Request</h4>
+                                        <div class="form-group">
+                                            <label>Request Description</label>
+                                            <input type="text" id="kitchenRequestText" placeholder="e.g. Prepare 5 steaks" />
+                                        </div>
+                                        <button class="btn btn-secondary" onclick="app.createKitchenTask()">Send Request</button>
+                                    </div>
+                                </div>
+
+                                <div id="kitchenList"></div>
+                            </div>
+
+                            <!-- Housekeeping Tab -->
+                            <div id="tab-housekeeping" class="tab-content">
+                                <h3>Housekeeping Dashboard</h3>
+
+                                <div class="card" style="margin-bottom: 16px;">
+                                    <div class="card-body">
+                                        <h4>Add Housekeeping Task</h4>
+                                        <div class="form-group">
+                                            <label>Room Number</label>
+                                            <input type="number" id="housekeepingRoomNumber" placeholder="101" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Task Status</label>
+                                            <select id="housekeepingTaskStatus">
+                                                <option value="needed">Needed</option>
+                                                <option value="cleaning">Cleaning</option>
+                                                <option value="cleaned">Cleaned</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Notes</label>
+                                            <textarea id="housekeepingTaskNotes" placeholder="Special requests or comments..."></textarea>
+                                        </div>
+                                        <button class="btn btn-secondary" onclick="app.createHousekeepingTask()">Add Task</button>
+                                    </div>
+                                </div>
+
+                                <div id="housekeepingList"></div>
+                            </div>
+
+                            <!-- Sales Tab -->
+                            <div id="tab-sales" class="tab-content">
+                                <h3>Sales Report</h3>
+                                <div id="salesList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+            <div>
+                <h4>Contact Us</h4>
+                <p>+63 950 659 6185</p>
+                <p><a href="mailto:info@royalimperialdomain.com">info@royalimperialdomain.com</a></p>
+                <p>Contact us: <a href="https://www.facebook.com/royalimperialdomain" target="_blank">Facebook</a> | <a href="https://www.instagram.com/royalimperialdomain" target="_blank">Instagram</a> | <a href="mailto:info@royalimperialdomain.com">Email</a></p>
+                <p><a href="#" onclick="app.showPage('contact')">Contact Form</a></p>
+            </div>
+            <div>
+                <h4>Visit Us</h4>
+                <p>Royal Imperial Domain</p>
+                <p>Gen. Santos Ave.,<br>Central Bicutan, Taguig City, Metro Manila, Philippines</p>
+            </div>
+        </div>
+        <p style="text-align: center; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">&copy; 2026 Royal Imperial Domain. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const app = {
+            API_BASE: 'http://localhost:3000',
+            currentUser: null,
+            cartItems: [],
+            cartTotal: 0,
+            isAdmin: false,
+
+            rooms: [
+                { type: 'Standard', image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop', price: 150, desc: 'Comfortable and elegant' },
+                { type: 'Deluxe', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop', price: 220, desc: 'Spacious with city view' },
+                { type: 'Executive', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrCbDOANjIysZlIUbFajPLv5U6Ws7nSokzhw&s', price: 350, desc: 'Premium suite experience' },
+                { type: 'Luxury', image: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&h=300&fit=crop', price: 500, desc: 'Exquisite luxury suite' },
+                { type: 'Presidential', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop', price: 1200, desc: 'Ultimate palace experience' }
+            ],
+
+            menuItems: [
+                { name: 'Wagyu Steak', price: 45, image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop' },
+                { name: 'Lobster Pasta', price: 38, image: 'https://www.foodandwine.com/thmb/UMKX8ynOU_4TDWHc5Q2YfS8_zSU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Creamy-Tuscan-Lobster-Pasta-FT-Recipe-0625-4294969f2a074028a5ea2bef81c79ca8.jpg' },
+                { name: 'Salmon Fillet', price: 42, image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop' },
+                { name: 'Truffle Risotto', price: 35, image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&h=300&fit=crop' },
+                { name: 'Grilled Chicken', price: 28, image: 'https://www.budgetbytes.com/wp-content/uploads/2024/06/Grilled-Chicken-Overhead-500x500.jpg' },
+                { name: 'Signature Dessert', price: 18, image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop' },
+                { name: 'Wine Glass', price: 25, image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=300&fit=crop' },
+                { name: 'Caesar Salad', price: 15, image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop' },
+                { name: 'Chocolate Delite', price: 16, image: 'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=400&h=300&fit=crop' }
+            ],
+
+            init() {
+                this.checkLoginStatus();
+                this.setupDemoData();
+                this.renderRoomsPage();
+                this.renderMenuPage();
+                this.renderReviews();
+                this.updateNavigation();
+                document.getElementById('reviewForm')?.addEventListener('change', () => this.updateBookingSummary());
+                document.getElementById('checkIn')?.addEventListener('change', () => this.updateBookingSummary());
+                document.getElementById('checkOut')?.addEventListener('change', () => this.updateBookingSummary());
+                document.getElementById('roomType')?.addEventListener('change', () => this.updateBookingSummary());
+                document.getElementById('numberOfRooms')?.addEventListener('change', () => this.updateBookingSummary());
+            },
+
+            setupDemoData() {
+                // Setup demo users - ensure admin user always exists and roles are set
+                let users = JSON.parse(localStorage.getItem('users') || '[]');
+
+                users = users.map(u => {
+                    if (!u.role) {
+                        u.role = (u.email === 'admin120@hotel.com' ? 'admin' : 'user');
+                    }
+                    return u;
+                });
+
+                const adminExists = users.some(u => u.email === 'admin120@hotel.com');
+                if (!adminExists) {
+                    users.push({ id: 3, name: 'Admin', email: 'admin120@hotel.com', password: 'password123', phone: '+63-917-555-0000', role: 'admin' });
+                } else {
+                    users = users.map(u => {
+                        if (u.email === 'admin120@hotel.com') u.role = 'admin';
+                        return u;
+                    });
+                }
+
+                const johnExists = users.some(u => u.email === 'john@example.com');
+                if (!johnExists) {
+                    users.push({ id: 1, name: 'John Smith', email: 'john@example.com', password: 'password', phone: '+63-917-123-4567', role: 'user' });
+                }
+
+                const janeExists = users.some(u => u.email === 'jane@example.com');
+                if (!janeExists) {
+                    users.push({ id: 2, name: 'Jane Doe', email: 'jane@example.com', password: 'password', phone: '+63-918-234-5678', role: 'user' });
+                }
+
+                localStorage.setItem('users', JSON.stringify(users));
+
+                // Setup demo bookings
+                if (!localStorage.getItem('bookings')) {
+                    localStorage.setItem('bookings', JSON.stringify([]));
+                }
+
+                // Setup demo orders
+                if (!localStorage.getItem('orders')) {
+                    localStorage.setItem('orders', JSON.stringify([]));
+                }
+
+                // Setup demo reviews
+                if (!localStorage.getItem('reviews')) {
+                    localStorage.setItem('reviews', JSON.stringify([]));
+                }
+
+                // Setup cloud transactions log
+                if (!localStorage.getItem('cloud_transactions')) {
+                    localStorage.setItem('cloud_transactions', JSON.stringify([]));
+                }
+
+                // Setup demo rooms
+                if (!localStorage.getItem('rooms')) {
+                    const demoRooms = [];
+                    for (let i = 101; i <= 150; i++) {
+                        demoRooms.push({ roomNumber: i, status: 'available', updatedAt: new Date().toISOString() });
+                    }
+                    localStorage.setItem('rooms', JSON.stringify(demoRooms));
+                }
+            },
+
+            checkLoginStatus() {
+                const userToken = localStorage.getItem('userToken');
+
+                if (userToken) {
+                    try {
+                        this.currentUser = JSON.parse(userToken);
+                        // Check if user role is admin
+                        this.isAdmin = this.currentUser.role === 'admin';
+                    } catch (e) {
+                        localStorage.removeItem('userToken');
+                        this.currentUser = null;
+                        this.isAdmin = false;
+                    }
+                } else {
+                    this.currentUser = null;
+                    this.isAdmin = false;
+                }
+            },
+
+            updateNavigation() {
+                const navLinks = document.getElementById('navLinks');
+                const adminLink = document.getElementById('adminLink');
+
+                if (this.currentUser) {
+                    // User is logged in - show user menu
+                    navLinks.innerHTML = `
+                        <a onclick="app.showPage('home')">Home</a>
+                        <a onclick="app.showPage('rooms')">Rooms</a>
+                        <a onclick="app.showPage('restaurant')">Restaurant</a>
+                        <a onclick="app.showPage('booking')">Booking</a>
+                        <a onclick="app.showPage('blog')">Blog</a>
+                        <a onclick="app.showPage('reviews')">Reviews</a>
+                        <a onclick="app.showPage('profile')">Profile</a>
+                        <span style="color: var(--accent); font-weight: 600;">Welcome, ${this.currentUser.name || this.currentUser.username}!</span>
+                        <a onclick="app.logout()" style="color: #dc2626;">Logout</a>
+                    `;
+                    // When logged in, load and show profile data
+                    this.loadProfileData();
+                } else {
+                    // No user logged in - show login/signup
+                    navLinks.innerHTML = `
+                        <a onclick="app.showPage('home')">Home</a>
+                        <a onclick="app.showPage('rooms')">Rooms</a>
+                        <a onclick="app.showPage('restaurant')">Restaurant</a>
+                        <a onclick="app.showPage('blog')">Blog</a>
+                        <a onclick="app.showPage('reviews')">Reviews</a>
+                        <a onclick="app.showPage('login')">Login</a>
+                        <a onclick="app.showPage('signup')">Sign Up</a>
+                    `;
+                }
+
+                // Admin link only shows for admin users
+                if (adminLink) {
+                    adminLink.style.display = this.isAdmin ? 'inline-block' : 'none';
+                }
+            },
+
+            showMessage(message, type = 'success') {
+                const overlay = document.getElementById('globalMessageOverlay');
+                const box = document.getElementById('globalMessageBox');
+                if (!overlay || !box) return;
+
+                box.textContent = message;
+                box.className = 'message-box ' + (type === 'error' ? 'error' : 'success');
+                overlay.style.display = 'flex';
+
+                clearTimeout(this._messageTimeout);
+                this._messageTimeout = setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 2800);
+            },
+
+            showPage(page) {
+                // Check access control
+                if ((page === 'booking' || page === 'restaurant') && !this.currentUser) {
+                    this.showMessage('Please login to access this feature', 'error');
+                    this.showPage('login');
+                    return;
+                }
+
+                // Check admin access
+                if (page === 'admin' && !this.isAdmin) {
+                    this.showMessage('Please login with admin credentials to access this page', 'error');
+                    this.showPage('login');
+                    return;
+                }
+
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(page)?.classList.add('active');
+                window.scrollTo(0, 0);
+
+                // Pre-fill forms with user data
+                if (page === 'booking' && this.currentUser) {
+                    this.populateBookingForm();
+                }
+
+                if (page === 'admin') {
+                    this.showAdminDashboard();
+                } else if (page === 'reviews') {
+                    this.renderReviews();
+                }
+            },
+
+            populateBookingForm() {
+                if (this.currentUser) {
+                    document.getElementById('guestName').value = this.currentUser.name || '';
+                    document.getElementById('guestEmail').value = this.currentUser.email || '';
+                }
+            },
+
+            async userLogin(event) {
+                event.preventDefault();
+
+                const email = document.getElementById('userEmail').value;
+                const password = document.getElementById('userPassword').value;
+
+                try {
+                    // Try cloud first
+                    try {
+                        const response = await fetch(`${this.API_BASE}/api/auth/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password }),
+                            timeout: 5000
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                this.currentUser = data.user;
+                                this.isAdmin = data.user.role === 'admin';
+                                localStorage.setItem('userToken', JSON.stringify(data.user));
+                                this.cloudSync('user_login', { email, timestamp: new Date().toISOString() });
+                                this.showMessage('Login successful!', 'success', 'loginMessage');
+                                this.updateNavigation();
+                                setTimeout(() => this.showPage('home'), 1000);
+                                return;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.log('API unavailable, using localStorage...');
+                    }
+
+                    // Fallback to localStorage
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    const user = users.find(u => u.email === email && u.password === password);
+
+                    if (user) {
+                        if (!user.role) {
+                            user.role = (user.email === 'admin120@hotel.com' ? 'admin' : 'user');
+                            const updatedUsers = users.map(u => u.email === user.email ? user : u);
+                            localStorage.setItem('users', JSON.stringify(updatedUsers));
+                        }
+                        this.currentUser = user;
+                        this.isAdmin = user.role === 'admin';
+                        localStorage.setItem('userToken', JSON.stringify(user));
+                        this.cloudSync('user_login', { email, method: 'localStorage', timestamp: new Date().toISOString() });
+                        this.showMessage('Login successful! (Offline Mode)', 'success', 'loginMessage');
+                        this.updateNavigation();
+                        setTimeout(() => this.showPage('home'), 1000);
+                    } else {
+                        throw new Error('Invalid credentials');
+                    }
+                } catch (error) {
+                    this.showMessage(`Error: ${error.message}`, 'error', 'loginMessage');
+                }
+            },
+
+            async userSignup(event) {
+                event.preventDefault();
+
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                const phone = document.getElementById('signupPhone').value;
+
+                try {
+                    // Try cloud first
+                    let savedUser = null;
+                    try {
+                        const response = await fetch(`${this.API_BASE}/api/auth/signup`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name, email, password, phone }),
+                            timeout: 5000
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                savedUser = data.user;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.log('API unavailable, using localStorage...');
+                    }
+
+                    // Fallback to localStorage
+                    if (!savedUser) {
+                        const users = JSON.parse(localStorage.getItem('users') || '[]');
+                        if (users.find(u => u.email === email)) {
+                            throw new Error('Email already registered');
+                        }
+                        savedUser = { id: Date.now(), name, email, password, phone, role: 'user', createdAt: new Date().toISOString() };
+                        users.push(savedUser);
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+
+                    this.cloudSync('user_signup', { name, email, phone, timestamp: new Date().toISOString() });
+                    this.showMessage('Account created successfully! Redirecting to login...', 'success', 'signupMessage');
+                    document.getElementById('signupForm').reset();
+                    setTimeout(() => this.showPage('login'), 2000);
+                } catch (error) {
+                    this.showMessage(`Error: ${error.message}`, 'error', 'signupMessage');
+                }
+            },
+
+            logout() {
+                localStorage.removeItem('userToken');
+                this.currentUser = null;
+                this.isAdmin = false;
+                this.updateNavigation();
+                this.showPage('home');
+                this.showMessage('Logged out successfully', 'success');
+            },
+
+            loadProfileData() {
+                if (!this.currentUser) return;
+
+                // Populate user info
+                const profileName = document.getElementById('profileName');
+                const profileEmail = document.getElementById('profileEmail');
+                if (profileName) profileName.textContent = this.currentUser.name || this.currentUser.username;
+                if (profileEmail) profileEmail.textContent = this.currentUser.email || 'No email';
+
+                // Load bookings
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]')
+                    .filter(b => b.email === this.currentUser.email || b.userId === this.currentUser.id);
+                const bookingsList = document.getElementById('bookingsList');
+                if (bookingsList) {
+                    if (bookings.length === 0) {
+                        bookingsList.innerHTML = '<p style="color: var(--muted);">No reservations found.</p>';
+                    } else {
+                        bookingsList.innerHTML = bookings.map(b => `
+                            <div class="list-item">
+                                <strong>Booking #${b.id}</strong>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Room: ${b.roomType || 'N/A'}</p>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Check-in: ${b.checkIn}</p>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Total: $${b.total || 0}</p>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+                // Load orders
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]')
+                    .filter(o => o.email === this.currentUser.email || o.userId === this.currentUser.id);
+                const ordersList = document.getElementById('ordersList');
+                if (ordersList) {
+                    if (orders.length === 0) {
+                        ordersList.innerHTML = '<p style="color: var(--muted);">No orders found.</p>';
+                    } else {
+                        ordersList.innerHTML = orders.map(o => `
+                            <div class="list-item">
+                                <strong>Order #${o.id}</strong>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Items: ${o.items ? o.items.length : 0}</p>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Total: $${o.total || 0}</p>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Date: ${o.date || o.timestamp}</p>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+                // Load receipts (combine bookings and orders)
+                const receipts = [...bookings, ...orders];
+                const receiptsList = document.getElementById('receiptsList');
+                if (receiptsList) {
+                    if (receipts.length === 0) {
+                        receiptsList.innerHTML = '<p style="color: var(--muted);">No receipts found.</p>';
+                    } else {
+                        receiptsList.innerHTML = receipts.map(r => `
+                            <div class="list-item">
+                                <strong>Receipt #${r.id}</strong>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Type: ${r.roomType ? 'Booking' : 'Order'}</p>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">Amount: $${r.total || 0}</p>
+                                <button class="btn" style="padding: 6px 12px; font-size: 0.85rem; margin-top: 8px;" onclick="app.downloadReceipt(${r.id})">Download</button>
+                            </div>
+                        `).join('');
+                    }
+                }
+            },
+
+            downloadReceipt(id) {
+                this.showMessage('Receipt download initiated. Check your downloads folder.', 'success');
+            },
+
+            renderRoomsPage() {
+                const grid = document.getElementById('roomsGrid');
+                grid.innerHTML = this.rooms.map(room => `
+                    <div class="card">
+                        <div class="card-image" style="background-image: url('${room.image}'); background-size: cover; background-position: center;"></div>
+                        <div class="card-body">
+                            <div class="card-title">${room.type} Room</div>
+                            <div class="card-price">$${room.price}</div>
+                            <p class="card-desc">${room.desc}</p>
+                            <button class="btn btn-secondary" onclick="app.showPage('booking')">Book</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            renderMenuPage() {
+                const grid = document.getElementById('menuGrid');
+                grid.innerHTML = this.menuItems.map(item => `
+                    <div class="card">
+                        <div class="card-image" style="background-image: url('${item.image}'); background-size: cover; background-position: center;">
+                            <div style="background: rgba(0,0,0,0.3); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">${item.name}</div>
+                            <div class="card-price">$${item.price}</div>
+                            <button class="btn btn-secondary" onclick="app.addToCart('${item.name}', ${item.price})">Add to Cart</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            addToCart(name, price) {
+                if (!this.currentUser) {
+                    this.showMessage('Please login to add items to cart', 'error');
+                    this.showPage('login');
+                    return;
+                }
+
+                this.cartItems.push({ name, price });
+                this.cartTotal += price;
+                document.getElementById('cartTotal').textContent = this.cartTotal.toFixed(2);
+                this.showMessage(`${name} added to cart!`, 'success', 'cartMessage');
+                this.updateCartDisplay();
+            },
+
+            updateCartDisplay() {
+                const cartItemsEl = document.getElementById('cartItems');
+                if (cartItemsEl) {
+                    cartItemsEl.innerHTML = this.cartItems.map((item, index) => `
+                        <div class="cart-item">
+                            <span>${item.name}</span>
+                            <span>$${item.price}</span>
+                            <button onclick="app.removeFromCart(${index})" class="btn-small">Remove</button>
+                        </div>
+                    `).join('');
+                }
+            },
+
+            removeFromCart(index) {
+                const removed = this.cartItems.splice(index, 1)[0];
+                this.cartTotal -= removed.price;
+                document.getElementById('cartTotal').textContent = this.cartTotal.toFixed(2);
+                this.updateCartDisplay();
+            },
+
+            lastReceiptText: '',
+
+            updateServiceFields() {
+                const serviceType = document.getElementById('serviceType')?.value;
+                const tableSection = document.getElementById('tableNumberSection');
+                const roomSection = document.getElementById('roomNumberSection');
+
+                if (serviceType === 'dine-in') {
+                    if (tableSection) tableSection.style.display = 'block';
+                    if (roomSection) roomSection.style.display = 'none';
+                } else if (serviceType === 'room-service') {
+                    if (tableSection) tableSection.style.display = 'none';
+                    if (roomSection) roomSection.style.display = 'block';
+                } else {
+                    if (tableSection) tableSection.style.display = 'none';
+                    if (roomSection) roomSection.style.display = 'none';
+                }
+            },
+
+            proceedWithOrder() {
+                if (!this.currentUser) {
+                    this.showMessage('Please login to place an order', 'error');
+                    this.showPage('login');
+                    return;
+                }
+
+                if (this.cartItems.length === 0) {
+                    this.showMessage('Please add items to your cart', 'error');
+                    return;
+                }
+
+                const serviceType = document.getElementById('serviceType')?.value;
+                if (!serviceType) {
+                    this.showMessage('Please select dine-in or room service', 'error');
+                    return;
+                }
+
+                let tableNumber = null;
+                let roomNumber = null;
+
+                if (serviceType === 'dine-in') {
+                    tableNumber = document.getElementById('tableNumber')?.value;
+                    if (!tableNumber) {
+                        this.showMessage('Please choose a table number for dine-in', 'error');
+                        return;
+                    }
+                } else if (serviceType === 'room-service') {
+                    roomNumber = document.getElementById('orderRoomNumber')?.value;
+                    if (!roomNumber) {
+                        this.showMessage('Please enter room number for room service', 'error');
+                        return;
+                    }
+                }
+
+                if (!this.currentUser.name) {
+                    this.showMessage('Please update your profile with your name', 'error');
+                    return;
+                }
+
+                this.submitOrder(serviceType, tableNumber, roomNumber, this.currentUser.name);
+            },
+
+            downloadLastReceipt() {
+                if (!this.lastReceiptText) {
+                    this.showMessage('No receipt available yet', 'error');
+                    return;
+                }
+                const blob = new Blob([this.lastReceiptText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `royal-imperial-receipt-${Date.now()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            },
+
+            async submitOrder(serviceType, tableNumber, roomNumber, guestName) {
+                try {
+                    const loading = document.getElementById('bookingLoading');
+                    if (loading) loading.classList.add('active');
+
+                    const orderData = {
+                        id: Date.now(),
+                        serviceType,
+                        tableNumber: tableNumber ? parseInt(tableNumber) : null,
+                        roomNumber,
+                        items: this.cartItems,
+                        totalPrice: this.cartTotal,
+                        guestName,
+                        userId: this.currentUser.id,
+                        orderNotes: '',
+                        createdAt: new Date().toISOString(),
+                        status: 'received'
+                    };
+
+                    let success = false;
+                    // Try cloud first
+                    try {
+                        const response = await fetch(`${this.API_BASE}/api/order`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(orderData),
+                            timeout: 5000
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                this.showMessage('Thank you for choosing Royal Imperial Domain', 'success');
+                                const receiptText = this.buildReceiptText(orderData, data.orderId);
+                                this.lastReceiptText = receiptText;
+                                this.generateReceipt(orderData, data.orderId);
+                                success = true;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.log('Cloud unavailable, saving locally...');
+                    }
+
+                    // Save to localStorage
+                    if (!success) {
+                        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                        orders.push(orderData);
+                        localStorage.setItem('orders', JSON.stringify(orders));
+                        this.showMessage('Thank you for choosing Royal Imperial Domain', 'success');
+                        const receiptText = this.buildReceiptText(orderData, `LOCAL-${orderData.id}`);
+                        this.lastReceiptText = receiptText;
+                        this.generateReceipt(orderData, `LOCAL-${orderData.id}`);
+                        success = true;
+                    }
+
+                    // Cloud sync
+                    this.cloudSync('order_placed', {
+                        orderId: orderData.id,
+                        serviceType,
+                        amount: this.cartTotal,
+                        timestamp: orderData.createdAt
+                    });
+
+                    if (success) {
+                        this.cartItems = [];
+                        this.cartTotal = 0;
+                        document.getElementById('cartTotal').textContent = '0.00';
+                        this.updateCartDisplay();
+                    }
+                } catch (error) {
+                    this.showMessage(`Error: ${error.message}`, 'error');
+                } finally {
+                    if (document.getElementById('bookingLoading')) {
+                        document.getElementById('bookingLoading').classList.remove('active');
+                    }
+                }
+            },
+
+            generateReceipt(orderData, orderId) {
+                const receiptWindow = window.open('', '_blank', 'width=400,height=600');
+                const receiptHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Receipt - Order #${orderId}</title>
+                        <style>
+                            body { font-family: monospace; margin: 20px; }
+                            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+                            .item { display: flex; justify-content: space-between; margin: 5px 0; }
+                            .total { border-top: 1px solid #000; padding-top: 10px; font-weight: bold; }
+                            .footer { margin-top: 30px; text-align: center; font-size: 12px; }
+                            @media print { .no-print { display: none; } }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h2>Royal Imperial Domain</h2>
+                            <p>Luxury Hotel & Restaurant</p>
+                            <p>Order #${orderId}</p>
+                            <p>${new Date().toLocaleString()}</p>
+                        </div>
+
+                        <div>
+                            <p><strong>Guest:</strong> ${orderData.guestName}</p>
+                            <p><strong>Service:</strong> ${orderData.serviceType}</p>
+                            ${orderData.serviceType === 'dine-in' ? `<p><strong>Table:</strong> ${orderData.tableNumber}</p>` : `<p><strong>Room:</strong> ${orderData.roomNumber}</p>`}
+                        </div>
+
+                        <div style="margin: 20px 0;">
+                            <h3>Order Items:</h3>
+                            ${orderData.items.map(item => `
+                                <div class="item">
+                                    <span>${item.name}</span>
+                                    <span>$${item.price}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="total">
+                            <div class="item">
+                                <span>TOTAL</span>
+                                <span>$${orderData.totalPrice.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <div class="footer">
+                            <p>Thank you for choosing Royal Imperial Domain</p>
+                            <p>Visit us again soon.</p>
+                            <button class="no-print" onclick="window.print()">Print Receipt</button>
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                receiptWindow.document.write(receiptHTML);
+                receiptWindow.document.close();
+            },
+
+            buildReceiptText(orderData, orderId) {
+                let text = 'Royal Imperial Domain\n';
+                text += `Order #${orderId}\n`;
+                text += `Date: ${new Date().toLocaleString()}\n\n`;
+                text += `Guest: ${orderData.guestName}\n`;
+                text += `Service: ${orderData.serviceType}\n`;
+                if (orderData.serviceType === 'dine-in') {
+                    text += `Table: ${orderData.tableNumber}\n`;
+                } else {
+                    text += `Room: ${orderData.roomNumber}\n`;
+                }
+                text += '\nItems:\n';
+                orderData.items.forEach(item => {
+                    text += ` - ${item.name}: $${item.price}\n`;
+                });
+                text += `\nTotal: $${orderData.totalPrice.toFixed(2)}\n`;
+                text += '\nThank you for choosing Royal Imperial Domain\n';
+                return text;
+            },
+
+            updateBookingSummary() {
+                const roomType = document.getElementById('roomType')?.value;
+                const checkIn = document.getElementById('checkIn')?.value;
+                const checkOut = document.getElementById('checkOut')?.value;
+                const numberOfRooms = parseInt(document.getElementById('numberOfRooms')?.value || 1);
+
+                if (!roomType || !checkIn || !checkOut) return;
+
+                const room = this.rooms.find(r => r.type === roomType);
+                if (!room) return;
+
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+
+                if (nights <= 0) return;
+
+                const total = room.price * numberOfRooms * nights;
+
+                document.getElementById('summaryRoom').textContent = roomType;
+                document.getElementById('summaryNights').textContent = nights;
+                document.getElementById('summaryRooms').textContent = numberOfRooms;
+                document.getElementById('summaryTotal').textContent = '$' + total.toFixed(2);
+            },
+
+            async submitBooking(event) {
+                event.preventDefault();
+
+                if (!this.currentUser) {
+                    this.showMessage('Please login to make a booking', 'error', 'bookingMessage');
+                    this.showPage('login');
+                    return;
+                }
+
+                const guestName = this.currentUser.name || document.getElementById('guestName').value;
+                const guestEmail = this.currentUser.email || document.getElementById('guestEmail').value;
+                const checkIn = document.getElementById('checkIn').value;
+                const checkOut = document.getElementById('checkOut').value;
+                const roomType = document.getElementById('roomType').value;
+                const numberOfRooms = parseInt(document.getElementById('numberOfRooms').value);
+
+                const room = this.rooms.find(r => r.type === roomType);
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                const totalPrice = room.price * numberOfRooms * nights;
+
+                const bookingData = {
+                    id: Date.now(),
+                    guestName, 
+                    guestEmail, 
+                    checkIn, 
+                    checkOut, 
+                    roomType, 
+                    numberOfRooms, 
+                    totalPrice,
+                    userId: this.currentUser.id,
+                    createdAt: new Date().toISOString(),
+                    bookingStatus: 'confirmed'
+                };
+
+                try {
+                    document.getElementById('bookingLoading').classList.add('active');
+
+                    let success = false;
+                    // Try cloud first
+                    try {
+                        const response = await fetch(`${this.API_BASE}/api/booking`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bookingData),
+                            timeout: 5000
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                this.showMessage('Thank you for choosing Royal Imperial Domain', 'success', 'bookingMessage');
+                                this.updateRoomStatusAfterBooking(numberOfRooms);
+                                this.generateBookingConfirmation(bookingData, data.bookingId);
+                                success = true;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.log('Cloud unavailable, saving locally...');
+                    }
+
+                    // Save to localStorage
+                    if (!success) {
+                        const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                        bookings.push(bookingData);
+                        localStorage.setItem('bookings', JSON.stringify(bookings));
+                        this.showMessage('Thank you for choosing Royal Imperial Domain', 'success', 'bookingMessage');
+                        this.updateRoomStatusAfterBooking(numberOfRooms);
+                        this.generateBookingConfirmation(bookingData, `LOCAL-${bookingData.id}`);
+                        success = true;
+                    }
+
+                    // Cloud sync
+                    this.cloudSync('booking_created', {
+                        bookingId: bookingData.id,
+                        roomType,
+                        nights,
+                        amount: totalPrice,
+                        timestamp: bookingData.createdAt
+                    });
+
+                    if (success) {
+                        document.getElementById('bookingForm').reset();
+                        setTimeout(() => this.showPage('home'), 3000);
+                    }
+                } catch (error) {
+                    this.showMessage(`Error: ${error.message}`, 'error', 'bookingMessage');
+                } finally {
+                    document.getElementById('bookingLoading').classList.remove('active');
+                }
+            },
+
+            updateRoomStatusAfterBooking(numberOfRooms) {
+                const rooms = JSON.parse(localStorage.getItem('rooms') || '[]');
+                const availableRooms = rooms.filter(r => r.status === 'available').slice(0, numberOfRooms);
+                availableRooms.forEach(ar => ar.status = 'occupied');
+
+                const updatedRooms = rooms.map(r => {
+                    const found = availableRooms.find(ar => ar.roomNumber === r.roomNumber);
+                    return found ? { ...r, status: 'occupied', updatedAt: new Date().toISOString() } : r;
+                });
+
+                localStorage.setItem('rooms', JSON.stringify(updatedRooms));
+
+                // If API is available, update room statuses too
+                availableRooms.forEach(r => {
+                    fetch(`${this.API_BASE}/api/admin/rooms`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomNumber: r.roomNumber, status: 'occupied' })
+                    }).catch(() => null);
+                });
+
+                // Refresh admin room display values
+                this.displayRooms(updatedRooms);
+            },
+
+            generateBookingConfirmation(bookingData, bookingId) {
+                const confirmationWindow = window.open('', '_blank', 'width=500,height=700');
+                const confirmationHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Booking Confirmation - #${bookingId}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+                            .header { text-align: center; border-bottom: 2px solid #556b2f; padding-bottom: 20px; margin-bottom: 30px; }
+                            .details { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                            .footer { margin-top: 40px; text-align: center; color: #666; font-size: 14px; }
+                            @media print { .no-print { display: none; } }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>Royal Imperial Domain</h1>
+                            <h2>Booking Confirmation</h2>
+                            <p><strong>Booking ID:</strong> ${bookingId}</p>
+                        </div>
+
+                        <div class="details">
+                            <h3>Booking Details</h3>
+                            <p><strong>Guest Name:</strong> ${bookingData.guestName}</p>
+                            <p><strong>Email:</strong> ${bookingData.guestEmail}</p>
+                            <p><strong>Room Type:</strong> ${bookingData.roomType}</p>
+                            <p><strong>Number of Rooms:</strong> ${bookingData.numberOfRooms}</p>
+                            <p><strong>Check-in:</strong> ${bookingData.checkIn}</p>
+                            <p><strong>Check-out:</strong> ${bookingData.checkOut}</p>
+                            <p><strong>Total Amount:</strong> $${bookingData.totalPrice.toFixed(2)}</p>
+                        </div>
+
+                        <div class="details">
+                            <h3>Important Information</h3>
+                            <ul>
+                                <li>Check-in time: 3:00 PM</li>
+                                <li>Check-out time: 11:00 AM</li>
+                                <li>Free cancellation up to 24 hours before check-in</li>
+                                <li>Breakfast included with all room types</li>
+                            </ul>
+                        </div>
+
+                        <div class="footer">
+                            <p>Thank you for choosing Royal Imperial Domain!</p>
+                            <p>We look forward to welcoming you.</p>
+                            <button class="no-print" onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; background: #556b2f; color: white; border: none; border-radius: 5px; cursor: pointer;">Print Confirmation</button>
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                confirmationWindow.document.write(confirmationHTML);
+                confirmationWindow.document.close();
+            },
+
+            async submitReview(event) {
+                event.preventDefault();
+
+                if (!this.currentUser) {
+                    this.showMessage('Please login to submit a review', 'error', 'reviewMessage');
+                    this.showPage('login');
+                    return;
+                }
+
+                const newReview = {
+                    id: Date.now(),
+                    name: this.currentUser.name,
+                    userId: this.currentUser.id,
+                    rating: parseInt(document.getElementById('reviewRating').value),
+                    text: document.getElementById('reviewText').value,
+                    date: new Date().toLocaleDateString()
+                };
+
+                let savedRemote = false;
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/reviews`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newReview),
+                        timeout: 5000
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) savedRemote = true;
+                    }
+                } catch (err) {
+                    console.log('Review cloud endpoint not available, using local storage');
+                }
+
+                const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+                reviews.unshift(newReview);
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+
+                if (savedRemote) {
+                    this.cloudSync('review_submitted', { reviewId: newReview.id, userId: newReview.userId, rating: newReview.rating, timestamp: new Date().toISOString() });
+                }
+
+                this.showMessage('Thank you for your review!', 'success', 'reviewMessage');
+                document.getElementById('reviewForm').reset();
+                this.renderReviews();
+            },
+
+            async renderReviews() {
+                const list = document.getElementById('reviewsList');
+                let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/reviews`, { timeout: 3000 });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && Array.isArray(data.reviews)) {
+                            reviews = data.reviews.map(r => ({ ...r, date: r.date || new Date().toLocaleDateString() }));
+                            localStorage.setItem('reviews', JSON.stringify(reviews));
+                        }
+                    }
+                } catch (err) {
+                    console.log('Cloud reviews unavailable, using local storage');
+                }
+
+                if (reviews.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No reviews yet</p>';
+                    return;
+                }
+
+                list.innerHTML = reviews.map(r => `
+                    <div class="list-item">
+                        <strong>${r.name}</strong>
+                        <div style="color: var(--accent); font-size: 0.9rem;">Rating: ${r.rating}/5</div>
+                        <p style="margin-top: 8px; color: var(--muted);">${r.text}</p>
+                        <small style="color: #999;">${r.date}</small>
+                    </div>
+                `).join('');
+            },
+
+            showAdminDashboard() {
+                if (!this.isAdmin) return;
+
+                document.getElementById('adminStatus').textContent = 'Admin Dashboard';
+                this.loadAdminData();
+            },
+
+            adminLogout() {
+                localStorage.removeItem('userToken');
+                this.isAdmin = false;
+                this.currentUser = null;
+                this.updateNavigation();
+                document.getElementById('adminStatus').textContent = '';
+                this.showPage('home');
+                this.showMessage('Logged out successfully', 'success');
+            },
+
+            async loadAdminData() {
+                if (!this.isAdmin) return;
+
+                try {
+                    let bookings = [];
+                    let orders = [];
+                    let transactions = [];
+                    let rooms = [];
+                    let kitchenTasks = [];
+                    let housekeepingTasks = [];
+
+                    try {
+                        const [bookingsRes, ordersRes, syncRes, roomsRes, kitchenRes, housekeepingRes] = await Promise.all([
+                            fetch(`${this.API_BASE}/api/admin/bookings`, { timeout: 3000 }).catch(() => null),
+                            fetch(`${this.API_BASE}/api/admin/orders`, { timeout: 3000 }).catch(() => null),
+                            fetch(`${this.API_BASE}/api/sync/transactions`, { timeout: 3000 }).catch(() => null),
+                            fetch(`${this.API_BASE}/api/admin/rooms`, { timeout: 3000 }).catch(() => null),
+                            fetch(`${this.API_BASE}/api/kitchen/tasks`, { timeout: 3000 }).catch(() => null),
+                            fetch(`${this.API_BASE}/api/housekeeping/tasks`, { timeout: 3000 }).catch(() => null)
+                        ]);
+
+                        if (bookingsRes?.ok) {
+                            const data = await bookingsRes.json();
+                            bookings = data.bookings || [];
+                        }
+                        if (ordersRes?.ok) {
+                            const data = await ordersRes.json();
+                            orders = data.orders || [];
+                        }
+                        if (syncRes?.ok) {
+                            const data = await syncRes.json();
+                            transactions = data.transactions || [];
+                        }
+                        if (roomsRes?.ok) {
+                            const data = await roomsRes.json();
+                            rooms = data.rooms || [];
+                        }
+                        if (kitchenRes?.ok) {
+                            const data = await kitchenRes.json();
+                            kitchenTasks = data.tasks || [];
+                        }
+                        if (housekeepingRes?.ok) {
+                            const data = await housekeepingRes.json();
+                            housekeepingTasks = data.tasks || [];
+                        }
+                    } catch (e) {
+                        console.log('Cloud admin endpoints unavailable', e);
+                    }
+
+                    if (bookings.length === 0) {
+                        bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                    }
+                    if (orders.length === 0) {
+                        orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                    }
+                    if (transactions.length === 0) {
+                        transactions = JSON.parse(localStorage.getItem('cloud_transactions') || '[]');
+                    }
+                    if (rooms.length === 0) {
+                        rooms = JSON.parse(localStorage.getItem('rooms') || '[]');
+                    }
+                    if (kitchenTasks.length === 0) {
+                        kitchenTasks = JSON.parse(localStorage.getItem('kitchen_tasks') || '[]');
+                    }
+                    if (housekeepingTasks.length === 0) {
+                        housekeepingTasks = JSON.parse(localStorage.getItem('housekeeping_tasks') || '[]');
+                    }
+
+                    this.displayBookings(bookings);
+                    this.displayOrders(orders);
+                    this.displayTransactions(transactions);
+                    this.displayRooms(rooms);
+                    this.displayKitchenTasks(kitchenTasks);
+                    this.displayHousekeepingTasks(housekeepingTasks);
+                    this.displaySalesReport(bookings, orders);
+                    this.updateAdminStats(bookings, orders, rooms);
+                } catch (error) {
+                    console.log('Failed to load admin data:', error);
+                }
+            },
+
+            displayRooms(rooms) {
+                const totalRooms = rooms.length;
+                const available = rooms.filter(r => r.status === 'available').length;
+                const occupied = rooms.filter(r => r.status === 'occupied').length;
+                const cleaning = rooms.filter(r => r.status === 'cleaning').length;
+
+                const availableEl = document.getElementById('availableRoomsCount');
+                const occupiedEl = document.getElementById('occupiedRoomsCount');
+                const cleaningEl = document.getElementById('cleaningRoomsCount');
+                const statOccupancy = document.getElementById('statOccupancy');
+
+                if (availableEl) availableEl.textContent = `${available}`;
+                if (occupiedEl) occupiedEl.textContent = `${occupied}`;
+                if (cleaningEl) cleaningEl.textContent = `${cleaning}`;
+                if (statOccupancy) statOccupancy.textContent = totalRooms > 0 ? `${Math.round((occupied/totalRooms)*100)}%` : '0%';
+
+                const list = document.getElementById('roomStatusList');
+                if (!list) return;
+
+                if (rooms.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No room data</p>';
+                    return;
+                }
+
+                list.innerHTML = rooms.map(room => `
+                    <div class="list-item">
+                        <div class="list-item-row">
+                            <div class="list-item-col"><strong>Room ${room.roomNumber}</strong></div>
+                            <div class="list-item-col"><small>Status: ${room.status}</small></div>
+                            <span class="status-badge ${room.status === 'available' ? 'ready' : room.status === 'occupied' ? 'preparing' : 'completed'}">${room.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            displayTransactions(transactions) {
+                const list = document.getElementById('kitchenList');
+                if (!list) return;
+
+                if (transactions.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No transactions recorded</p>';
+                    return;
+                }
+
+                list.innerHTML = transactions.slice(-20).map(t => `
+                    <div class="list-item">
+                        <div class="list-item-row">
+                            <div class="list-item-col">
+                                <strong>${t.type}</strong>
+                                <small>${t.data?.userId || 'System'}</small>
+                            </div>
+                            <div class="list-item-col">
+                                <small>${new Date(t.timestamp).toLocaleString()}</small>
+                            </div>
+                            <span class="status-badge ${t.synced ? 'completed' : 'preparing'}">${t.synced ? 'Synced' : 'Local'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            displayBookings(bookings) {
+                const list = document.getElementById('bookingsList');
+                if (bookings.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No bookings yet</p>';
+                    return;
+                }
+
+                list.innerHTML = bookings.map(b => `
+                    <div class="list-item">
+                        <div class="list-item-row">
+                            <div class="list-item-col">
+                                <strong>${b.guestName}</strong>
+                                <small>${b.guestEmail}</small>
+                            </div>
+                            <div class="list-item-col">
+                                <strong>${b.roomType}</strong>
+                                <small>${b.numberOfRooms} room(s)</small>
+                            </div>
+                            <div class="list-item-col">
+                                <strong>$${b.totalPrice}</strong>
+                                <small>${b.checkIn} to ${b.checkOut}</small>
+                            </div>
+                            <span class="status-badge completed">${b.bookingStatus || 'confirmed'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            displayOrders(orders) {
+                const list = document.getElementById('ordersList');
+                if (!list) return;
+
+                if (orders.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No orders yet</p>';
+                    return;
+                }
+
+                list.innerHTML = orders.slice(-20).map(o => `
+                    <div class="list-item">
+                        <div class="list-item-row">
+                            <div class="list-item-col">
+                                <strong>${o.guestName}</strong>
+                                <small>${o.serviceType} - ${o.items?.length || 0} items</small>
+                            </div>
+                            <div class="list-item-col">
+                                <strong>$${o.totalPrice?.toFixed(2) || '0.00'}</strong>
+                                <small>${new Date(o.createdAt).toLocaleDateString()}</small>
+                            </div>
+                            <span class="status-badge ${o.status === 'completed' ? 'completed' : 'preparing'}">${o.status || 'received'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            displaySalesReport(bookings, orders) {
+                const list = document.getElementById('salesList');
+                if (!list) return;
+
+                const allBookings = Array.isArray(bookings) ? bookings : JSON.parse(localStorage.getItem('bookings') || '[]');
+                const allOrders = Array.isArray(orders) ? orders : JSON.parse(localStorage.getItem('orders') || '[]');
+
+                const totalBookingRevenue = allBookings.reduce((sum, b) => sum + (parseFloat(b.totalPrice) || 0), 0);
+                const totalOrderRevenue = allOrders.reduce((sum, o) => sum + (parseFloat(o.totalPrice) || 0), 0);
+                const totalRevenue = totalBookingRevenue + totalOrderRevenue;
+
+                list.innerHTML = `
+                    <div class="card" style="padding: 16px; margin-bottom: 20px;">
+                        <p><strong>Total Booking Revenue:</strong> $${totalBookingRevenue.toFixed(2)}</p>
+                        <p><strong>Total Order Revenue:</strong> $${totalOrderRevenue.toFixed(2)}</p>
+                        <p><strong>Total Revenue:</strong> $${totalRevenue.toFixed(2)}</p>
+                        <p><strong>Bookings:</strong> ${allBookings.length}</p>
+                        <p><strong>Orders:</strong> ${allOrders.length}</p>
+                    </div>
+                `;
+            },
+
+            displayKitchenTasks(tasks) {
+                const list = document.getElementById('kitchenList');
+                if (tasks.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No kitchen tasks</p>';
+                    return;
+                }
+
+                list.innerHTML = tasks.map(task => `
+                    <div class="list-item">
+                        <div class="list-item-row">
+                            <div class="list-item-col">
+                                <strong>${task.description}</strong>
+                                <small>By: ${task.requestor}</small>
+                            </div>
+                            <div class="list-item-col">
+                                <small>${new Date(task.createdAt).toLocaleString()}</small>
+                            </div>
+                            <span class="status-badge ${task.status === 'completed' ? 'completed' : task.status === 'in-progress' ? 'preparing' : 'pending'}">${task.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            displayHousekeepingTasks(tasks) {
+                const list = document.getElementById('housekeepingList');
+                if (tasks.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No housekeeping tasks</p>';
+                    return;
+                }
+
+                list.innerHTML = tasks.map(task => `
+                    <div class="list-item">
+                        <div class="list-item-row">
+                            <div class="list-item-col">
+                                <strong>Room ${task.roomNumber}</strong>
+                                <small>${task.notes || 'No notes'}</small>
+                            </div>
+                            <div class="list-item-col">
+                                <small>${new Date(task.createdAt).toLocaleString()}</small>
+                            </div>
+                            <span class="status-badge ${task.status === 'cleaned' ? 'completed' : task.status === 'cleaning' ? 'preparing' : 'pending'}">${task.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            updateAdminStats(bookings, orders, rooms) {
+                const bookingsData = Array.isArray(bookings) ? bookings : JSON.parse(localStorage.getItem('bookings') || '[]');
+                const ordersData = Array.isArray(orders) ? orders : JSON.parse(localStorage.getItem('orders') || '[]');
+                const roomsData = Array.isArray(rooms) ? rooms : JSON.parse(localStorage.getItem('rooms') || '[]');
+
+                const totalRevenue = bookingsData.reduce((sum, b) => sum + (parseFloat(b.totalPrice) || 0), 0)
+                    + ordersData.reduce((sum, o) => sum + (parseFloat(o.totalPrice) || 0), 0);
+
+                const totalCustomers = JSON.parse(localStorage.getItem('users') || '[]').length;
+                const available = roomsData.filter(r => r.status === 'available').length;
+                const occupied = roomsData.filter(r => r.status === 'occupied').length;
+                const cleaning = roomsData.filter(r => r.status === 'cleaning').length;
+
+                document.getElementById('statBookings').textContent = bookingsData.length.toString();
+                document.getElementById('statRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
+                document.getElementById('statOrders').textContent = ordersData.length.toString();
+                document.getElementById('statCustomers').textContent = totalCustomers.toString();
+                document.getElementById('statRooms').textContent = available.toString();
+                document.getElementById('statRoomsOccupied').textContent = occupied.toString();
+                document.getElementById('statRoomsCleaning').textContent = cleaning.toString();
+                document.getElementById('statOccupancy').textContent = roomsData.length > 0 ? `${Math.round((occupied / roomsData.length) * 100)}%` : '0%';
+            },
+
+            switchTab(event, tabName) {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                if (event?.target) event.target.classList.add('active');
+                document.getElementById(`tab-${tabName}`)?.classList.add('active');
+            },
+
+            showMessage(text, type, elementId = 'bookingMessage') {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+
+                el.textContent = text;
+                el.className = `message ${type} active`;
+                setTimeout(() => el.classList.remove('active'), 4000);
+            },
+
+            async createKitchenTask() {
+                const description = document.getElementById('kitchenRequestText').value.trim();
+                if (!description) {
+                    this.showMessage('Please provide a request for kitchen.', 'error');
+                    return;
+                }
+
+                const taskPayload = { requestor: this.currentUser?.name || 'Admin', description, status: 'pending' };
+                const defaultTasks = JSON.parse(localStorage.getItem('kitchen_tasks') || '[]');
+                defaultTasks.unshift({ ...taskPayload, id: Date.now(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+                localStorage.setItem('kitchen_tasks', JSON.stringify(defaultTasks));
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/kitchen/tasks`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(taskPayload),
+                        timeout: 3000
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.showMessage('Kitchen task created and sent', 'success');
+                        }
+                    }
+                } catch (e) {
+                    console.log('Kitchen API unreachable, task stored locally');
+                    this.showMessage('Kitchen task stored locally', 'info');
+                }
+
+                document.getElementById('kitchenRequestText').value = '';
+                this.loadAdminData();
+            },
+
+            async createHousekeepingTask() {
+                const roomNumber = parseInt(document.getElementById('housekeepingRoomNumber').value, 10);
+                const status = document.getElementById('housekeepingTaskStatus').value;
+                const notes = document.getElementById('housekeepingTaskNotes').value.trim();
+
+                if (!roomNumber || !status) {
+                    this.showMessage('Room number and status are required for housekeeping', 'error');
+                    return;
+                }
+
+                const taskPayload = { roomNumber, status, notes };
+                const defaultTasks = JSON.parse(localStorage.getItem('housekeeping_tasks') || '[]');
+                defaultTasks.unshift({ ...taskPayload, id: Date.now(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+                localStorage.setItem('housekeeping_tasks', JSON.stringify(defaultTasks));
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/housekeeping/tasks`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(taskPayload),
+                        timeout: 3000
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.showMessage('Housekeeping task sent to server', 'success');
+                        }
+                    }
+                } catch (e) {
+                    console.log('Housekeeping API unreachable, stored locally');
+                    this.showMessage('Housekeeping task stored locally', 'info');
+                }
+
+                document.getElementById('housekeepingRoomNumber').value = '';
+                document.getElementById('housekeepingTaskNotes').value = '';
+                this.loadAdminData();
+            },
+
+            // Cloud Sync System - Records all transactions
+            cloudSync(transactionType, data) {
+                const transactions = JSON.parse(localStorage.getItem('cloud_transactions') || '[]');
+                const transaction = {
+                    id: Date.now(),
+                    type: transactionType,
+                    data,
+                    userId: this.currentUser?.id,
+                    synced: false,
+                    timestamp: new Date().toISOString()
+                };
+                transactions.push(transaction);
+                localStorage.setItem('cloud_transactions', JSON.stringify(transactions));
+
+                // Try to sync with cloud
+                this.syncWithCloud(transaction);
+            },
+
+            async syncWithCloud(transaction) {
+                try {
+                    const response = await fetch(`${this.API_BASE}/api/sync/transaction`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(transaction),
+                        timeout: 3000
+                    });
+
+                    if (response.ok) {
+                        const transactions = JSON.parse(localStorage.getItem('cloud_transactions') || '[]');
+                        const index = transactions.findIndex(t => t.id === transaction.id);
+                        if (index !== -1) {
+                            transactions[index].synced = true;
+                            localStorage.setItem('cloud_transactions', JSON.stringify(transactions));
+                        }
+                        console.log('Transaction synced to cloud');
+                    }
+                } catch (error) {
+                    console.log('Cloud sync pending (will retry when online)');
+                }
+            },
+
+            // View all transactions
+            viewTransactionHistory() {
+                const transactions = JSON.parse(localStorage.getItem('cloud_transactions') || '[]');
+                console.table(transactions);
+                alert(`${transactions.length} transactions recorded. Check console for details.`);
+            }
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
